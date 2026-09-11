@@ -1,0 +1,9 @@
+{
+  "name": "Homework Hub",
+  "short_name": "Homework Hub",
+  "start_url": ".",
+  "display": "standalone",
+  "background_color": "#f7f7f5",
+  "theme_color": "#20211f",
+  "description": "A simple homework planner"
+}
