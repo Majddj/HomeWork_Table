@@ -9,8 +9,17 @@ type Props = {
   notes: Note[];
   theme: "light" | "dark";
   onThemeChange: (theme: "light" | "dark") => void;
+  onExportBackup: () => void;
+  onImportBackup: () => void;
 };
-export function ProfileScreen({ groups, notes, theme, onThemeChange }: Props) {
+export function ProfileScreen({
+  groups,
+  notes,
+  theme,
+  onThemeChange,
+  onExportBackup,
+  onImportBackup,
+}: Props) {
   const themeColors = useThemeColors();
   const complete = notes.filter((note) => note.done).length;
   return (
@@ -85,6 +94,12 @@ export function ProfileScreen({ groups, notes, theme, onThemeChange }: Props) {
             </Pressable>
           </View>
         </View>
+        <Pressable style={styles.backupButton} onPress={onExportBackup}>
+          <Text>Экспорт резервной копии</Text>
+        </Pressable>
+        <Pressable style={styles.backupButton} onPress={onImportBackup}>
+          <Text>Импорт резервной копии</Text>
+        </Pressable>
       </ScrollView>
     </View>
   );
@@ -143,4 +158,12 @@ const styles = StyleSheet.create({
     alignItems: "center",
   },
   selectedTheme: { backgroundColor: colors.accentSoft },
+  backupButton: {
+    width: "100%",
+    padding: 12,
+    marginTop: 10,
+    borderRadius: 7,
+    backgroundColor: colors.soft,
+    alignItems: "center",
+  },
 });

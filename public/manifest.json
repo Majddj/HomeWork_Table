@@ -1,9 +1,11 @@
 {
-  "name": "БГУИР Notes",
-  "short_name": "БГУИР Notes",
+  "name": "БГУИЯ Notes",
+  "short_name": "БГУИЯ Notes",
   "start_url": ".",
+  "scope": "/",
+  "id": "/",
   "display": "standalone",
-  "background_color": "#f7f7f5",
-  "theme_color": "#20211f",
+  "background_color": "#f5f8fb",
+  "theme_color": "#00529c",
   "description": "Учебный помощник для групп и заметок"
 }

@@ -31,10 +31,12 @@ export function CreateGroupModal({
   const theme = useThemeColors();
   const [name, setName] = useState(initialGroup?.name ?? "");
   const [color, setColor] = useState(initialGroup?.color ?? palette[0]);
+  const [colorOpen, setColorOpen] = useState(true);
   function create() {
     if (!name.trim()) return;
     Keyboard.dismiss();
-    onCreate(name.trim(), color);
+    const selectedColor = /^#[0-9a-f]{6}$/i.test(color) ? color : palette[0];
+    onCreate(name.trim(), selectedColor);
     setName("");
   }
   return (
@@ -59,9 +61,15 @@ export function CreateGroupModal({
               </Text>
               <View style={styles.spacer} />
             </View>
-            <View style={[styles.circle, { borderColor: theme.line }]}>
+            <Pressable
+              style={[
+                styles.circle,
+                { borderColor: color, backgroundColor: `${color}33` },
+              ]}
+              onPress={() => setColorOpen((open) => !open)}
+            >
               <Ionicons name="folder-outline" size={28} color={theme.accent} />
-            </View>
+            </Pressable>
             <Text style={[styles.label, { color: theme.muted }]}>
               Название группы
             </Text>
@@ -80,23 +88,42 @@ export function CreateGroupModal({
                 },
               ]}
             />
-            <Text style={[styles.label, { color: theme.muted }]}>
-              Цвет группы
-            </Text>
-            <View style={styles.colors}>
-              {palette.map((item) => (
-                <Pressable
-                  key={item}
-                  onPress={() => setColor(item)}
+            {colorOpen && (
+              <>
+                <Text style={[styles.label, { color: theme.muted }]}>
+                  Цвет группы
+                </Text>
+                <View style={styles.colors}>
+                  {palette.map((item) => (
+                    <Pressable
+                      key={item}
+                      onPress={() => setColor(item)}
+                      style={[
+                        styles.swatch,
+                        { backgroundColor: item },
+                        item === color && styles.selected,
+                      ]}
+                    />
+                  ))}
+                </View>
+                <TextInput
+                  value={color}
+                  onChangeText={setColor}
+                  placeholder="#00529c"
+                  placeholderTextColor={theme.muted}
+                  autoCapitalize="none"
                   style={[
-                    styles.swatch,
-                    { backgroundColor: item },
-                    item === color && { borderColor: theme.ink },
-                    item === color && styles.selected,
+                    styles.input,
+                    styles.colorInput,
+                    {
+                      color: theme.ink,
+                      borderColor: theme.line,
+                      backgroundColor: theme.canvas,
+                    },
                   ]}
                 />
-              ))}
-            </View>
+              </>
+            )}
             <Pressable
               style={[styles.create, { backgroundColor: theme.accent }]}
               onPress={create}
@@ -155,6 +182,7 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 13,
   },
+  colorInput: { marginTop: 10 },
   colors: { flexDirection: "row", gap: 14, marginTop: 8 },
   swatch: { width: 25, height: 25, borderRadius: 13 },
   selected: { borderWidth: 3, borderColor: colors.ink },
