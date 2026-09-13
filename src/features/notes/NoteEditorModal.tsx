@@ -36,6 +36,7 @@ export function NoteEditorModal({
   const [title, setTitle] = useState(note?.title ?? "");
   const [body, setBody] = useState(note?.body ?? "");
   const [groupId, setGroupId] = useState(note?.groupId ?? group.id);
+  const [selection, setSelection] = useState({ start: 0, end: 0 });
   useEffect(() => {
     if (visible) {
       setTitle(note?.title ?? "");
@@ -52,8 +53,25 @@ export function NoteEditorModal({
       groupId,
     );
   }
-  function format(prefix: string, suffix = "") {
-    setBody((current) => `${current}${current ? "\n" : ""}${prefix}${suffix}`);
+  function formatNumberedSelection() {
+    setBody((current) => {
+      const { start, end } = selection;
+      if (start === end) return current;
+      const selected = current.slice(start, end);
+      const numbered = selected
+        .split("\n")
+        .map((line, index) => `${index + 1}. ${line}`)
+        .join("\n");
+      return `${current.slice(0, start)}${numbered}${current.slice(end)}`;
+    });
+  }
+  function formatSelection(prefix: string, suffix = "") {
+    setBody((current) => {
+      const { start, end } = selection;
+      if (start === end) return current;
+      const selected = current.slice(start, end);
+      return `${current.slice(0, start)}${prefix}${selected}${suffix}${current.slice(end)}`;
+    });
   }
   return (
     <Modal
@@ -127,35 +145,35 @@ export function NoteEditorModal({
               </ScrollView>
               <Text style={[styles.label, { color: theme.muted }]}>Текст</Text>
               <View style={[styles.toolbar, { borderColor: theme.line }]}>
-                <Pressable onPress={() => format("**жирный**")}>
+                <Pressable onPress={() => formatSelection("**", "**")}>
                   <Text style={[styles.tool, { color: theme.ink }]}>B</Text>
                 </Pressable>
-                <Pressable onPress={() => format("_курсив_")}>
+                <Pressable onPress={() => formatSelection("_", "_")}>
                   <Text
                     style={[styles.tool, styles.italic, { color: theme.ink }]}
                   >
                     I
                   </Text>
                 </Pressable>
-                <Pressable onPress={() => format("__подчеркнутый__")}>
+                <Pressable onPress={() => formatSelection("__", "__")}>
                   <Text style={[styles.tool, { color: theme.ink }]}>U</Text>
                 </Pressable>
-                <Pressable onPress={() => format("• ")}>
+                <Pressable onPress={() => formatSelection("• ")}>
                   <Text style={[styles.tool, { color: theme.ink }]}>•</Text>
                 </Pressable>
-                <Pressable onPress={() => format("1. ")}>
+                <Pressable onPress={formatNumberedSelection}>
                   <Text style={[styles.tool, { color: theme.ink }]}>1.</Text>
                 </Pressable>
-                <Pressable onPress={() => format("[ссылка](https://)")}>
+                <Pressable onPress={() => formatSelection("[", "](https://)")}>
                   <Text style={[styles.tool, { color: theme.ink }]}>↗</Text>
-                </Pressable>
-                <Pressable onPress={() => format("[вложение] ")}>
-                  <Text style={[styles.tool, { color: theme.ink }]}>⊙</Text>
                 </Pressable>
               </View>
               <TextInput
                 value={body}
                 onChangeText={setBody}
+                onSelectionChange={({ nativeEvent }) =>
+                  setSelection(nativeEvent.selection)
+                }
                 placeholder="Запиши содержание заметки..."
                 placeholderTextColor={theme.muted}
                 multiline

@@ -44,7 +44,35 @@ export function NoteDetailScreen({
         <Text style={[styles.heading, { color: theme.ink }]}>{note.title}</Text>
         <View style={[styles.body, { backgroundColor: theme.paper }]}>
           <Text style={[styles.bodyText, { color: theme.ink }]}>
-            {note.body}
+            {note.body
+              .split(
+                /(\*\*.*?\*\*|__.*?__|_.*?_|\[[^\]]+\]\([^)]+\)|\[вложение\])/g,
+              )
+              .map((part, index) =>
+                part === "[вложение]" ? (
+                  <Text key={index} style={styles.attachment}>
+                    <Ionicons name="attach" size={16} /> Вложение
+                  </Text>
+                ) : part.startsWith("**") && part.endsWith("**") ? (
+                  <Text key={index} style={styles.bold}>
+                    {part.slice(2, -2)}
+                  </Text>
+                ) : part.startsWith("__") && part.endsWith("__") ? (
+                  <Text key={index} style={styles.underline}>
+                    {part.slice(2, -2)}
+                  </Text>
+                ) : part.startsWith("_") && part.endsWith("_") ? (
+                  <Text key={index} style={styles.italic}>
+                    {part.slice(1, -1)}
+                  </Text>
+                ) : part.startsWith("[") ? (
+                  <Text key={index} style={styles.link}>
+                    {part.match(/^\[([^\]]+)/)?.[1]}
+                  </Text>
+                ) : (
+                  part
+                ),
+              )}
           </Text>
         </View>
         <Pressable
@@ -101,6 +129,11 @@ const styles = StyleSheet.create({
     minHeight: 320,
   },
   bodyText: { color: colors.ink, fontSize: 16, lineHeight: 27 },
+  bold: { fontWeight: "800" },
+  italic: { fontStyle: "italic" },
+  underline: { textDecorationLine: "underline" },
+  link: { color: colors.accent, textDecorationLine: "underline" },
+  attachment: { fontWeight: "700", color: colors.accent },
   complete: {
     marginTop: 18,
     padding: 16,

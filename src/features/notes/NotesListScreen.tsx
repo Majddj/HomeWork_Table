@@ -65,7 +65,35 @@ export function NotesListScreen({
                 style={[styles.body, { color: theme.muted }]}
                 numberOfLines={2}
               >
-                {note.body}
+                {note.body
+                  .split(
+                    /(\*\*.*?\*\*|__.*?__|_.*?_|\[[^\]]+\]\([^)]+\)|\[вложение\])/g,
+                  )
+                  .map((part, index) =>
+                    part === "[вложение]" ? (
+                      <Text key={index} style={styles.attachment}>
+                        <Ionicons name="attach" size={14} /> Вложение
+                      </Text>
+                    ) : part.startsWith("**") && part.endsWith("**") ? (
+                      <Text key={index} style={styles.bold}>
+                        {part.slice(2, -2)}
+                      </Text>
+                    ) : part.startsWith("__") && part.endsWith("__") ? (
+                      <Text key={index} style={styles.underline}>
+                        {part.slice(2, -2)}
+                      </Text>
+                    ) : part.startsWith("_") && part.endsWith("_") ? (
+                      <Text key={index} style={styles.italic}>
+                        {part.slice(1, -1)}
+                      </Text>
+                    ) : part.startsWith("[") ? (
+                      <Text key={index} style={styles.link}>
+                        {part.match(/^\[([^\]]+)/)?.[1]}
+                      </Text>
+                    ) : (
+                      part
+                    ),
+                  )}
               </Text>
               <Text style={[styles.date, { color: theme.muted }]}>
                 {note.updatedAt}
@@ -119,6 +147,11 @@ const styles = StyleSheet.create({
   title: { color: colors.ink, fontSize: 16, fontWeight: "700" },
   done: { textDecorationLine: "line-through", opacity: 0.5 },
   body: { color: colors.muted, fontSize: 13, lineHeight: 19, marginTop: 5 },
+  bold: { fontWeight: "800" },
+  italic: { fontStyle: "italic" },
+  underline: { textDecorationLine: "underline" },
+  link: { color: colors.accent, textDecorationLine: "underline" },
+  attachment: { fontWeight: "700", color: colors.accent },
   date: { color: colors.muted, fontSize: 11, marginTop: 8 },
   more: { color: colors.muted, fontSize: 22 },
   empty: { color: colors.muted, textAlign: "center", padding: 35 },
