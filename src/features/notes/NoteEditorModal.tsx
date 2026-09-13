@@ -84,7 +84,7 @@ export function NoteEditorModal({
         style={styles.layer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
       >
-        <Pressable style={styles.overlay} onPress={Keyboard.dismiss}>
+        <View style={styles.overlay}>
           <View style={[styles.sheet, { backgroundColor: theme.paper }]}>
             <View style={styles.top}>
               <Pressable onPress={onClose}>
@@ -144,6 +144,25 @@ export function NoteEditorModal({
                 ))}
               </ScrollView>
               <Text style={[styles.label, { color: theme.muted }]}>Текст</Text>
+              <TextInput
+                value={body}
+                onChangeText={setBody}
+                onSelectionChange={({ nativeEvent }) =>
+                  setSelection(nativeEvent.selection)
+                }
+                placeholder="Запиши содержание заметки..."
+                placeholderTextColor={theme.muted}
+                multiline
+                textAlignVertical="top"
+                style={[
+                  styles.bodyInput,
+                  {
+                    color: theme.ink,
+                    borderColor: theme.line,
+                    backgroundColor: theme.canvas,
+                  },
+                ]}
+              />
               <View style={[styles.toolbar, { borderColor: theme.line }]}>
                 <Pressable onPress={() => formatSelection("**", "**")}>
                   <Text style={[styles.tool, { color: theme.ink }]}>B</Text>
@@ -168,25 +187,6 @@ export function NoteEditorModal({
                   <Text style={[styles.tool, { color: theme.ink }]}>↗</Text>
                 </Pressable>
               </View>
-              <TextInput
-                value={body}
-                onChangeText={setBody}
-                onSelectionChange={({ nativeEvent }) =>
-                  setSelection(nativeEvent.selection)
-                }
-                placeholder="Запиши содержание заметки..."
-                placeholderTextColor={theme.muted}
-                multiline
-                textAlignVertical="top"
-                style={[
-                  styles.bodyInput,
-                  {
-                    color: theme.ink,
-                    borderColor: theme.line,
-                    backgroundColor: theme.canvas,
-                  },
-                ]}
-              />
               <Pressable
                 style={[styles.fullSave, { backgroundColor: theme.accent }]}
                 onPress={save}
@@ -195,7 +195,7 @@ export function NoteEditorModal({
               </Pressable>
             </ScrollView>
           </View>
-        </Pressable>
+        </View>
       </KeyboardAvoidingView>
     </Modal>
   );

@@ -1,4 +1,11 @@
-import { Pressable, ScrollView, StyleSheet, Text, View } from "react-native";
+import {
+  Linking,
+  Pressable,
+  ScrollView,
+  StyleSheet,
+  Text,
+  View,
+} from "react-native";
 import { Ionicons } from "@expo/vector-icons";
 import type { Group, Note } from "../../domain/types";
 import { colors, shadow, useThemeColors } from "../../theme";
@@ -87,7 +94,15 @@ export function NotesListScreen({
                         {part.slice(1, -1)}
                       </Text>
                     ) : part.startsWith("[") ? (
-                      <Text key={index} style={styles.link}>
+                      <Text
+                        key={index}
+                        style={styles.link}
+                        onPress={() => {
+                          const url = part.match(/\]\(([^)]+)\)/)?.[1];
+                          if (url?.startsWith("http"))
+                            void Linking.openURL(url);
+                        }}
+                      >
                         {part.match(/^\[([^\]]+)/)?.[1]}
                       </Text>
                     ) : (
