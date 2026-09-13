@@ -7,6 +7,7 @@ const keys = {
   groups: "bsuir-groups",
   notes: "bsuir-notes",
   settings: "bsuir-settings",
+  timetable: "bsuir-timetable-url",
 };
 
 async function read<T>(key: string, fallback: T): Promise<T> {
@@ -28,6 +29,9 @@ export const storageService = {
   getSettings: (fallback: Settings) => read(keys.settings, fallback),
   saveSettings: (settings: Settings) =>
     AsyncStorage.setItem(keys.settings, JSON.stringify(settings)),
+  getTimetableUrl: () => read(keys.timetable, "http://timetable.bsufl.by/"),
+  saveTimetableUrl: (url: string) =>
+    AsyncStorage.setItem(keys.timetable, JSON.stringify(url)),
   clearStorage: () => AsyncStorage.multiRemove(Object.values(keys)),
 };
 

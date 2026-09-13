@@ -2,12 +2,17 @@ import { Pressable, StyleSheet, Text, View } from "react-native";
 import { colors, useThemeColors } from "../theme";
 import { Ionicons } from "@expo/vector-icons";
 
-export type Tab = "home" | "groups" | "search" | "profile";
+export type Tab = "home" | "groups" | "schedule" | "search" | "profile";
 
 type Props = { active: Tab; onChange: (tab: Tab) => void };
-const items: { id: Tab; label: string; icon: keyof typeof Ionicons.glyphMap }[] = [
+const items: {
+  id: Tab;
+  label: string;
+  icon: keyof typeof Ionicons.glyphMap;
+}[] = [
   { id: "home", label: "Home", icon: "home-outline" },
   { id: "groups", label: "Groups", icon: "people-outline" },
+  { id: "schedule", label: "Schedule", icon: "calendar-outline" },
   { id: "search", label: "Search", icon: "search-outline" },
   { id: "profile", label: "Profile", icon: "person-outline" },
 ];

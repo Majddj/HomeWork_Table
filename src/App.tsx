@@ -11,6 +11,7 @@ import { NoteEditorModal } from "./features/notes/NoteEditorModal";
 import { NotesListScreen } from "./features/notes/NotesListScreen";
 import { ProfileScreen } from "./features/profile/ProfileScreen";
 import { SearchScreen } from "./features/search/SearchScreen";
+import { TimetableScreen } from "./features/timetable/TimetableScreen";
 import { colors, darkColors, lightColors, ThemeProvider } from "./theme";
 import { useTheme } from "./hooks/useTheme";
 import { storageService } from "./services/storageService";
@@ -221,6 +222,9 @@ export default function App() {
           onSelectGroup={openGroup}
         />
       );
+    if (activeTab === "schedule")
+       return <TimetableScreen />;
+    
     if (activeTab === "profile")
       return (
         <ProfileScreen
