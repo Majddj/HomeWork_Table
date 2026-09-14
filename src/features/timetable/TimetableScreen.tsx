@@ -6,7 +6,7 @@ import { ScreenHeader } from "../../components/ScreenHeader";
 import { colors, useThemeColors } from "../../theme";
 import { storageService } from "../../services/storageService";
 
-const TIMETABLE_URL = "http://timetable.bsufl.by/";
+const TIMETABLE_URL = "https://timetable.bsufl.by/";
 
 export function TimetableScreen() {
   const theme = useThemeColors();
