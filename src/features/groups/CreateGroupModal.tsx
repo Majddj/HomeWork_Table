@@ -52,6 +52,7 @@ export function CreateGroupModal({
       >
         <Pressable style={styles.overlay} onPress={Keyboard.dismiss}>
           <View style={[styles.sheet, { backgroundColor: theme.paper }]}>
+            <View style={styles.handle} />
             <View style={styles.top}>
               <Pressable onPress={onClose}>
                 <Ionicons name="close" size={28} color={theme.ink} />
@@ -151,7 +152,15 @@ const styles = StyleSheet.create({
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     padding: 20,
-    minHeight: "70%",
+    maxHeight: "85%",
+  },
+  handle: {
+    alignSelf: "center",
+    width: 38,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.line,
+    marginBottom: 10,
   },
   top: {
     flexDirection: "row",
@@ -178,7 +187,8 @@ const styles = StyleSheet.create({
     borderWidth: 1,
     borderColor: colors.line,
     borderRadius: 7,
-    padding: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
     color: colors.ink,
     fontSize: 13,
   },

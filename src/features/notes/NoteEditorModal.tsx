@@ -87,9 +87,11 @@ export function NoteEditorModal({
       <KeyboardAvoidingView
         style={styles.layer}
         behavior={Platform.OS === "ios" ? "padding" : "height"}
+        keyboardVerticalOffset={Platform.OS === "android" ? 24 : 0}
       >
         <View style={styles.overlay}>
           <View style={[styles.sheet, { backgroundColor: theme.paper }]}>
+            <View style={styles.handle} />
             <View style={styles.top}>
               <Pressable onPress={onClose}>
                 <Ionicons name="close" size={28} color={theme.ink} />
@@ -148,63 +150,76 @@ export function NoteEditorModal({
                 ))}
               </ScrollView>
               <Text style={[styles.label, { color: theme.muted }]}>Текст</Text>
-              <TextInput
-                value={body}
-                onChangeText={setBody}
-                onSelectionChange={({ nativeEvent }) =>
-                  setSelection(nativeEvent.selection)
-                }
-                placeholder="Запиши содержание заметки..."
-                placeholderTextColor={theme.muted}
-                multiline
-                textAlignVertical="top"
-                style={[
-                  styles.bodyInput,
-                  {
-                    color: theme.ink,
-                    borderColor: theme.line,
-                    backgroundColor: theme.canvas,
-                  },
-                ]}
-              />
-              <View style={[styles.toolbar, { borderColor: theme.line }]}>
-                <Pressable
-                  onPointerDown={keepFocus}
-                  onPress={() => formatSelection("**", "**")}
-                >
-                  <Text style={[styles.tool, { color: theme.ink }]}>B</Text>
-                </Pressable>
-                <Pressable
-                  onPointerDown={keepFocus}
-                  onPress={() => formatSelection("_", "_")}
-                >
-                  <Text
-                    style={[styles.tool, styles.italic, { color: theme.ink }]}
+              <View>
+                {selection.start !== selection.end && (
+                  <View
+                    style={[
+                      styles.floatingToolbar,
+                      {
+                        backgroundColor: theme.ink,
+                        shadowColor: theme.ink,
+                      },
+                    ]}
                   >
-                    I
-                  </Text>
-                </Pressable>
-                <Pressable
-                  onPointerDown={keepFocus}
-                  onPress={() => formatSelection("__", "__")}
-                >
-                  <Text style={[styles.tool, { color: theme.ink }]}>U</Text>
-                </Pressable>
-                <Pressable
-                  onPointerDown={keepFocus}
-                  onPress={() => formatSelection("• ")}
-                >
-                  <Text style={[styles.tool, { color: theme.ink }]}>•</Text>
-                </Pressable>
-                <Pressable onPointerDown={keepFocus} onPress={formatNumberedSelection}>
-                  <Text style={[styles.tool, { color: theme.ink }]}>1.</Text>
-                </Pressable>
-                <Pressable
-                  onPointerDown={keepFocus}
-                  onPress={() => formatSelection("[", "](https://)")}
-                >
-                  <Text style={[styles.tool, { color: theme.ink }]}>↗</Text>
-                </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={() => formatSelection("**", "**")}
+                    >
+                      <Text style={styles.floatingTool}>B</Text>
+                    </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={() => formatSelection("_", "_")}
+                    >
+                      <Text style={[styles.floatingTool, styles.italic]}>
+                        I
+                      </Text>
+                    </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={() => formatSelection("__", "__")}
+                    >
+                      <Text style={styles.floatingTool}>U</Text>
+                    </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={() => formatSelection("• ")}
+                    >
+                      <Text style={styles.floatingTool}>•</Text>
+                    </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={formatNumberedSelection}
+                    >
+                      <Text style={styles.floatingTool}>1.</Text>
+                    </Pressable>
+                    <Pressable
+                      onPointerDown={keepFocus}
+                      onPress={() => formatSelection("[", "](https://)")}
+                    >
+                      <Text style={styles.floatingTool}>↗</Text>
+                    </Pressable>
+                  </View>
+                )}
+                <TextInput
+                  value={body}
+                  onChangeText={setBody}
+                  onSelectionChange={({ nativeEvent }) =>
+                    setSelection(nativeEvent.selection)
+                  }
+                  placeholder="Запиши содержание заметки..."
+                  placeholderTextColor={theme.muted}
+                  multiline
+                  textAlignVertical="top"
+                  style={[
+                    styles.bodyInput,
+                    {
+                      color: theme.ink,
+                      borderColor: theme.line,
+                      backgroundColor: theme.canvas,
+                    },
+                  ]}
+                />
               </View>
               <Pressable
                 style={[styles.fullSave, { backgroundColor: theme.accent }]}
@@ -228,11 +243,19 @@ const styles = StyleSheet.create({
     backgroundColor: "rgba(21, 54, 46, .22)",
   },
   sheet: {
-    maxHeight: "92%",
+    maxHeight: "85%",
     backgroundColor: colors.paper,
     borderTopLeftRadius: 18,
     borderTopRightRadius: 18,
     padding: 20,
+  },
+  handle: {
+    alignSelf: "center",
+    width: 38,
+    height: 4,
+    borderRadius: 2,
+    backgroundColor: colors.line,
+    marginBottom: 10,
   },
   top: {
     flexDirection: "row",
@@ -250,7 +273,8 @@ const styles = StyleSheet.create({
     borderRadius: 7,
     color: colors.ink,
     fontSize: 14,
-    padding: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
   groups: { gap: 8 },
   chip: {
@@ -267,15 +291,24 @@ const styles = StyleSheet.create({
   selectedChip: { backgroundColor: colors.accentSoft },
   dot: { width: 8, height: 8, borderRadius: 5 },
   chipText: { color: colors.accent, fontSize: 10, fontWeight: "700" },
-  toolbar: {
+  floatingToolbar: {
+    position: "absolute",
+    top: "70%",
+    marginTop: 6,
+    left: 0,
+    zIndex: 10,
     flexDirection: "row",
-    gap: 16,
-    paddingVertical: 10,
-    borderTopWidth: 1,
-    borderBottomWidth: 1,
-    borderColor: colors.line,
+    alignItems: "center",
+    gap: 14,
+    paddingVertical: 8,
+    paddingHorizontal: 14,
+    borderRadius: 10,
+    elevation: 6,
+    shadowOpacity: 0.25,
+    shadowRadius: 8,
+    shadowOffset: { width: 0, height: 3 },
   },
-  tool: { color: colors.ink, fontSize: 15, fontWeight: "800" },
+  floatingTool: { color: "#fff", fontSize: 15, fontWeight: "800" },
   italic: { fontStyle: "italic" },
   bodyInput: {
     minHeight: 180,
@@ -285,7 +318,8 @@ const styles = StyleSheet.create({
     color: colors.ink,
     fontSize: 13,
     lineHeight: 20,
-    padding: 12,
+    paddingVertical: 14,
+    paddingHorizontal: 14,
   },
   fullSave: {
     backgroundColor: colors.accent,
