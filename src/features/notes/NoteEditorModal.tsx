@@ -73,6 +73,10 @@ export function NoteEditorModal({
       return `${current.slice(0, start)}${prefix}${selected}${suffix}${current.slice(end)}`;
     });
   }
+  // stops the TextInput from blurring (which collapses the selection) before onPress fires
+  function keepFocus(event: { preventDefault: () => void }) {
+    if (Platform.OS === "web") event.preventDefault();
+  }
   return (
     <Modal
       visible={visible}
@@ -164,26 +168,41 @@ export function NoteEditorModal({
                 ]}
               />
               <View style={[styles.toolbar, { borderColor: theme.line }]}>
-                <Pressable onPress={() => formatSelection("**", "**")}>
+                <Pressable
+                  onPointerDown={keepFocus}
+                  onPress={() => formatSelection("**", "**")}
+                >
                   <Text style={[styles.tool, { color: theme.ink }]}>B</Text>
                 </Pressable>
-                <Pressable onPress={() => formatSelection("_", "_")}>
+                <Pressable
+                  onPointerDown={keepFocus}
+                  onPress={() => formatSelection("_", "_")}
+                >
                   <Text
                     style={[styles.tool, styles.italic, { color: theme.ink }]}
                   >
                     I
                   </Text>
                 </Pressable>
-                <Pressable onPress={() => formatSelection("__", "__")}>
+                <Pressable
+                  onPointerDown={keepFocus}
+                  onPress={() => formatSelection("__", "__")}
+                >
                   <Text style={[styles.tool, { color: theme.ink }]}>U</Text>
                 </Pressable>
-                <Pressable onPress={() => formatSelection("• ")}>
+                <Pressable
+                  onPointerDown={keepFocus}
+                  onPress={() => formatSelection("• ")}
+                >
                   <Text style={[styles.tool, { color: theme.ink }]}>•</Text>
                 </Pressable>
-                <Pressable onPress={formatNumberedSelection}>
+                <Pressable onPointerDown={keepFocus} onPress={formatNumberedSelection}>
                   <Text style={[styles.tool, { color: theme.ink }]}>1.</Text>
                 </Pressable>
-                <Pressable onPress={() => formatSelection("[", "](https://)")}>
+                <Pressable
+                  onPointerDown={keepFocus}
+                  onPress={() => formatSelection("[", "](https://)")}
+                >
                   <Text style={[styles.tool, { color: theme.ink }]}>↗</Text>
                 </Pressable>
               </View>
