@@ -96,9 +96,32 @@ export default function App() {
     }
   }, [groups, notes, ready]);
   useEffect(() => {
-    if (Platform.OS === "web" && "serviceWorker" in navigator)
+    if (Platform.OS !== "web") return;
+    if ("serviceWorker" in navigator)
       void navigator.serviceWorker.register("/sw.js");
+    // Prevent pinch-zoom breaking layout/touch coordinates inside the PWA
+    let meta = document.querySelector('meta[name="viewport"]');
+    if (!meta) {
+      meta = document.createElement("meta");
+      meta.setAttribute("name", "viewport");
+      document.head.appendChild(meta);
+    }
+    meta.setAttribute(
+      "content",
+      "width=device-width, initial-scale=1, maximum-scale=1, user-scalable=no",
+    );
   }, []);
+
+  function confirmAction(title: string, message: string, onConfirm: () => void) {
+    if (Platform.OS === "web") {
+      if (window.confirm(`${title}\n\n${message}`)) onConfirm();
+      return;
+    }
+    Alert.alert(title, message, [
+      { text: "Отмена", style: "cancel" },
+      { text: "Удалить", style: "destructive", onPress: onConfirm },
+    ]);
+  }
 
   const selectedGroup = selectedGroupId
     ? groups.find((group) => group.id === selectedGroupId)
@@ -180,38 +203,22 @@ export default function App() {
     setEditorOpen(false);
   }
   function deleteNote(note: Note) {
-    Alert.alert("Удалить заметку?", "Это действие нельзя отменить.", [
-      { text: "Отмена", style: "cancel" },
-      {
-        text: "Удалить",
-        style: "destructive",
-        onPress: () => {
-          setNotes((current) => current.filter((item) => item.id !== note.id));
-          closeDetail();
-        },
-      },
-    ]);
+    confirmAction("Удалить заметку?", "Это действие нельзя отменить.", () => {
+      setNotes((current) => current.filter((item) => item.id !== note.id));
+      closeDetail();
+    });
   }
   function deleteGroup(group: Group) {
-    Alert.alert(
+    confirmAction(
       "Удалить группу?",
       `Вместе с «${group.name}» будут удалены связанные заметки. Это действие нельзя отменить.`,
-      [
-        { text: "Отмена", style: "cancel" },
-        {
-          text: "Удалить",
-          style: "destructive",
-          onPress: () => {
-            setGroups((current) =>
-              current.filter((item) => item.id !== group.id),
-            );
-            setNotes((current) =>
-              current.filter((note) => note.groupId !== group.id),
-            );
-            if (selectedGroupId === group.id) goHome();
-          },
-        },
-      ],
+      () => {
+        setGroups((current) => current.filter((item) => item.id !== group.id));
+        setNotes((current) =>
+          current.filter((note) => note.groupId !== group.id),
+        );
+        if (selectedGroupId === group.id) goHome();
+      },
     );
   }
 

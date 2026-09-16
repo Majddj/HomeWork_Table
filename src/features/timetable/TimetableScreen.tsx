@@ -15,7 +15,9 @@ export function TimetableScreen() {
   const iframeRef = useRef<HTMLIFrameElement | null>(null);
 
   const [url, setUrl] = useState(TIMETABLE_URL);
-  const [webError, setWebError] = useState(false);
+  // timetable.bsufl.by sends X-Frame-Options/CSP that block embedding,
+  // so the iframe silently stays blank instead of firing an error event.
+  const [webError, setWebError] = useState(Platform.OS === "web");
 
   useEffect(() => {
     void storageService.getTimetableUrl().then((savedUrl) => {

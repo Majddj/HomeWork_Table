@@ -4,9 +4,10 @@ import {
   useContext,
   type ReactNode,
 } from "react";
-import { Platform } from "react-native";
+import { ColorValue, Platform } from "react-native";
 
 export type ThemeColors = {
+  text: ColorValue | undefined;
   ink: string;
   muted: string;
   soft: string;
@@ -28,6 +29,7 @@ export const lightColors: ThemeColors = {
   accent: "#00529c",
   accentSoft: "#dcecf8",
   danger: "#b44f5b",
+  text: undefined
 };
 
 export const darkColors: ThemeColors = {
@@ -40,6 +42,7 @@ export const darkColors: ThemeColors = {
   accent: "#4d9bd8",
   accentSoft: "#183651",
   danger: "#e07882",
+  text: undefined
 };
 
 export const colors = lightColors;
